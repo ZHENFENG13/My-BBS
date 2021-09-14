@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.my.bbs.dao.BBSPostCollectMapper">
+  <resultMap id="BaseResultMap" type="com.my.bbs.entity.BBSPostCollect">
+    <id column="record_id" jdbcType="BIGINT" property="recordId" />
+    <result column="post_id" jdbcType="BIGINT" property="postId" />
+    <result column="user_id" jdbcType="BIGINT" property="userId" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    record_id, post_id, user_id, create_time
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from tb_post_collect_record
+    where record_id = #{recordId,jdbcType=BIGINT}
+  </select>
+  <select id="selectByUserIdAndPostId" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from tb_post_collect_record
+    where post_id = #{postId,jdbcType=BIGINT} and user_id = #{userId,jdbcType=BIGINT} limit 1
+  </select>
+  <select id="listByUserId" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from tb_post_collect_record
+    where user_id = #{userId,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from tb_post_collect_record
+    where record_id = #{recordId,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" parameterType="com.my.bbs.entity.BBSPostCollect">
+    insert into tb_post_collect_record (record_id, post_id, user_id, 
+      create_time)
+    values (#{recordId,jdbcType=BIGINT}, #{postId,jdbcType=BIGINT}, #{userId,jdbcType=BIGINT}, 
+      #{createTime,jdbcType=TIMESTAMP})
+  </insert>
+  <insert id="insertSelective" parameterType="com.my.bbs.entity.BBSPostCollect">
+    insert into tb_post_collect_record
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="recordId != null">
+        record_id,
+      </if>
+      <if test="postId != null">
+        post_id,
+      </if>
+      <if test="userId != null">
+        user_id,
+      </if>
+      <if test="createTime != null">
+        create_time,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="recordId != null">
+        #{recordId,jdbcType=BIGINT},
+      </if>
+      <if test="postId != null">
+        #{postId,jdbcType=BIGINT},
+      </if>
+      <if test="userId != null">
+        #{userId,jdbcType=BIGINT},
+      </if>
+      <if test="createTime != null">
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.my.bbs.entity.BBSPostCollect">
+    update tb_post_collect_record
+    <set>
+      <if test="postId != null">
+        post_id = #{postId,jdbcType=BIGINT},
+      </if>
+      <if test="userId != null">
+        user_id = #{userId,jdbcType=BIGINT},
+      </if>
+      <if test="createTime != null">
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where record_id = #{recordId,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.my.bbs.entity.BBSPostCollect">
+    update tb_post_collect_record
+    set post_id = #{postId,jdbcType=BIGINT},
+      user_id = #{userId,jdbcType=BIGINT},
+      create_time = #{createTime,jdbcType=TIMESTAMP}
+    where record_id = #{recordId,jdbcType=BIGINT}
+  </update>
+</mapper>

@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.my.bbs.dao.BBSPostCategoryMapper">
+  <resultMap id="BaseResultMap" type="com.my.bbs.entity.BBSPostCategory">
+    <id column="category_id" jdbcType="INTEGER" property="categoryId" />
+    <result column="category_name" jdbcType="VARCHAR" property="categoryName" />
+    <result column="category_rank" jdbcType="INTEGER" property="categoryRank" />
+    <result column="is_deleted" jdbcType="TINYINT" property="isDeleted" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    category_id, category_name, category_rank, is_deleted, create_time
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from tb_post_category
+    where category_id = #{categoryId,jdbcType=INTEGER}
+  </select>
+  <select id="getBBSPostCategories" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from tb_post_category
+    where is_deleted = 0 order by category_rank desc
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from tb_post_category
+    where category_id = #{categoryId,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.my.bbs.entity.BBSPostCategory">
+    insert into tb_post_category (category_id, category_name, category_rank, 
+      is_deleted, create_time)
+    values (#{categoryId,jdbcType=INTEGER}, #{categoryName,jdbcType=VARCHAR}, #{categoryRank,jdbcType=INTEGER}, 
+      #{isDeleted,jdbcType=TINYINT}, #{createTime,jdbcType=TIMESTAMP})
+  </insert>
+  <insert id="insertSelective" parameterType="com.my.bbs.entity.BBSPostCategory">
+    insert into tb_post_category
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="categoryId != null">
+        category_id,
+      </if>
+      <if test="categoryName != null">
+        category_name,
+      </if>
+      <if test="categoryRank != null">
+        category_rank,
+      </if>
+      <if test="isDeleted != null">
+        is_deleted,
+      </if>
+      <if test="createTime != null">
+        create_time,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="categoryId != null">
+        #{categoryId,jdbcType=INTEGER},
+      </if>
+      <if test="categoryName != null">
+        #{categoryName,jdbcType=VARCHAR},
+      </if>
+      <if test="categoryRank != null">
+        #{categoryRank,jdbcType=INTEGER},
+      </if>
+      <if test="isDeleted != null">
+        #{isDeleted,jdbcType=TINYINT},
+      </if>
+      <if test="createTime != null">
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.my.bbs.entity.BBSPostCategory">
+    update tb_post_category
+    <set>
+      <if test="categoryName != null">
+        category_name = #{categoryName,jdbcType=VARCHAR},
+      </if>
+      <if test="categoryRank != null">
+        category_rank = #{categoryRank,jdbcType=INTEGER},
+      </if>
+      <if test="isDeleted != null">
+        is_deleted = #{isDeleted,jdbcType=TINYINT},
+      </if>
+      <if test="createTime != null">
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where category_id = #{categoryId,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.my.bbs.entity.BBSPostCategory">
+    update tb_post_category
+    set category_name = #{categoryName,jdbcType=VARCHAR},
+      category_rank = #{categoryRank,jdbcType=INTEGER},
+      is_deleted = #{isDeleted,jdbcType=TINYINT},
+      create_time = #{createTime,jdbcType=TIMESTAMP}
+    where category_id = #{categoryId,jdbcType=INTEGER}
+  </update>
+</mapper>

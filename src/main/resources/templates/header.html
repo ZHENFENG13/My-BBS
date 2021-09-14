@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:fragment="head-fragment(title)">
+    <meta charset="utf-8">
+    <title th:text="${title}">首页</title>
+    <link rel="shortcut icon" th:href="@{/images/my-bbs-icon.png}">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <meta name="description" content="My-BBS,bbs,论坛,SpringBoot论坛,论坛系统,Java论坛,SpringBoot,spring-boot,java">
+    <meta name="description" content="My BBS 是由 SpringBoot + Mybatis + Thymeleaf 等技术实现的 Java BBS论坛系统">
+    <link rel="stylesheet" th:href="@{/layui/css/layui.css}">
+    <link rel="stylesheet" th:href="@{/css/global.css}">
+</head>
+
+<div th:fragment="header-fragment" class="fly-header layui-bg-black">
+    <div class="layui-container">
+        <a class="fly-logo" href="/">
+            <img th:src="@{/images/my-bbs-logo.png}" alt="My-BBS">
+        </a>
+        <ul class="layui-nav fly-nav layui-hide-xs">
+            <li class="layui-nav-item layui-this">
+                <a href="https://www.lanqiao.cn/courses/4830"><i class="iconfont icon-wenda"></i>开发文档</a>
+            </li>
+            <li class="layui-nav-item">
+                <a href="https://github.com/ZHENFENG13/My-BBS"><i class="iconfont icon-daima"></i>源码</a>
+            </li>
+            <li class="layui-nav-item layui-this">
+                <a href="https://juejin.im/user/59199e22a22b9d0058279886"><i class="iconfont icon-jiaoliu"></i>交流</a>
+            </li>
+        </ul>
+
+        <ul class="layui-nav fly-nav-user">
+
+            <!-- 未登入的状态 -->
+            <th:block th:if="${session.myBBSUser==null}">
+                <li class="layui-nav-item">
+                    <a class="iconfont icon-touxiang layui-hide-xs" href="user/login.html"></a>
+                </li>
+                <li class="layui-nav-item">
+                    <a th:href="@{/login}">登入</a>
+                </li>
+                <li class="layui-nav-item">
+                    <a th:href="@{/register}">注册</a>
+                </li>
+            </th:block>
+
+
+            <!-- 登入后的状态 -->
+            <th:block th:unless="${session.myBBSUser==null}">
+                <li class="layui-nav-item">
+                    <a class="fly-nav-avatar" href="javascript:;">
+                        <cite class="layui-hide-xs" th:text="${session.myBBSUser.nickName}">程序员十三</cite>
+                        <th:block th:if="${session.myBBSUser.gender=='男'}">
+                            <i class="iconfont icon-nan"></i>
+                        </th:block>
+                        <th:block th:if="${session.myBBSUser.gender=='女'}">
+                            <i class="iconfont icon-nv"></i>
+                        </th:block>
+                        <th:block th:if="${session.myBBSUser.gender=='未知'}">
+                            <i class="iconfont icon-biaoqing"></i>
+                        </th:block>
+                        <img th:src="@{${session.myBBSUser.headImgUrl}}">
+                        <span class="layui-nav-more"></span>
+                    </a>
+                    <dl class="layui-nav-child">
+                        <dd><a th:href="@{/userSet}"><i class="layui-icon">&#xe620;</i>基本设置</a></dd>
+                        <dd><a th:href="@{/myCenter}"><i class="layui-icon" style="margin-left: 2px; font-size: 22px;">&#xe68e;</i>我的主页</a>
+                        </dd>
+                        <hr style="margin: 5px 0;">
+                        <dd><a th:href="@{/logout}" style="text-align: center;">退出</a></dd>
+                    </dl>
+                </li>
+            </th:block>
+        </ul>
+    </div>
+</div>

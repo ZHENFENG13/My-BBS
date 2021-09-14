@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="header::head-fragment('用户主页')">
+</head>
+<body style="margin-top: 65px;">
+
+<div th:replace="header::header-fragment"></div>
+
+<div class="fly-home fly-panel">
+    <img th:src="@{${bbsUser.headImgUrl}}" th:alt="${bbsUser.nickName}">
+    <h1>
+        <th:block th:text="${bbsUser.nickName}">程序员十三</th:block>
+        <th:block th:if="${bbsUser.gender=='男'}">
+            <i class="iconfont icon-nan"></i>
+        </th:block>
+        <th:block th:if="${bbsUser.gender=='女'}">
+            <i class="iconfont icon-nv"></i>
+        </th:block>
+        <th:block th:if="${bbsUser.gender=='未知'}">
+            <i class="iconfont icon-biaoqing"></i>
+        </th:block>
+    </h1>
+
+    <p class="fly-home-info">
+        <i class="iconfont icon-biaoqing1"></i><span>
+        <th:block th:if="${bbsUser.userStatus==0}">账号正常
+        </th:block>
+        <th:block th:if="${bbsUser.userStatus==1}">账号已被封
+        </th:block>
+        </span>
+        <i class="iconfont icon-shijian"></i><span th:text="${#dates.format(bbsUser.createTime, 'yyyy-MM-dd')+' 加入'}"/>
+        <i class="iconfont icon-chengshi"></i><span th:text="${bbsUser.location}">来自杭州</span>
+    </p>
+
+    <p class="fly-home-sign" th:text="${bbsUser.introduce}">我不怕千万人阻挡，只怕自己投降</p>
+</div>
+
+<div class="layui-container">
+    <div class="layui-row layui-col-space15">
+        <div class="layui-col-md6 fly-home-jie">
+            <div class="fly-panel">
+                <h3 class="fly-panel-title">
+                    <th:block th:text="${bbsUser.nickName}"></th:block>
+                    近期发布的帖子
+                </h3>
+                <ul class="jie-row">
+
+                    <th:block th:unless="${#lists.isEmpty(recentPostList)}">
+                        <th:block th:each="bbsPost : ${recentPostList}">
+                            <li>
+                                <a th:href="@{${'/detail/'+bbsPost.postId}}"
+                                   th:text="${bbsPost.postTitle}">My-BBS开源啦</a>
+                                <i th:text="${#dates.format(bbsPost.createTime, 'yyyy/MM/dd HH:mm:ss')}">2021/08/01</i>
+                                <em class="layui-hide-xs">
+                                    <th:block th:text="${bbsPost.postViews}"></th:block>
+                                    阅/
+                                    <th:block th:text="${bbsPost.postComments}"></th:block>
+                                    答</em>
+                            </li>
+                        </th:block>
+                    </th:block>
+
+                    <th:block th:if="${#lists.isEmpty(recentPostList)}">
+                        <!-- 无数据时 -->
+                        <div class="fly-none" style="min-height: 50px; padding:30px 0; height:auto;">
+                            <i style="font-size:14px;">没有发布任何帖子</i></div>
+                    </th:block>
+
+                </ul>
+            </div>
+        </div>
+
+        <div class="layui-col-md6 fly-home-da">
+            <div class="fly-panel">
+                <h3 class="fly-panel-title">
+                    <th:block th:text="${bbsUser.nickName}">程序员十三</th:block>
+                    最近的评论
+                </h3>
+                <ul class="home-jieda">
+                    <th:block th:if="${#lists.isEmpty(recentCommentList)}">
+                        <div class="fly-none" style="min-height: 50px; padding:30px 0; height:auto;"><span>近期没有回复</span>
+                        </div>
+                    </th:block>
+
+                    <th:block th:unless="${#lists.isEmpty(recentCommentList)}">
+                        <th:block th:each="recentComment : ${recentCommentList}">
+                            <li>
+                                <p>
+                                    <span th:text="${#dates.format(recentComment.commentCreateTime, 'yyyy/MM/dd HH:mm:ss')}">1分钟前</span>
+                                    在<a th:href="@{${'/detail/'+recentComment.postId}}"
+                                        th:text="${recentComment.postTitle}" target="_blank">My-BBS开源啦</a>中评论：
+                                </p>
+                                <div class="home-dacontent" th:text="${recentComment.commentBody}">
+                                </div>
+                            </li>
+                        </th:block>
+                    </th:block>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="fly-footer">
+    <p>My-BBS社区 2021 &copy; <a href="https://github.com/ZHENFENG13/My-BBS" target="_blank">十三</a></p>
+</div>
+
+<script th:src="@{/layui/layui.js}"></script>
+<script type="text/javascript">
+    layui.use(['layer', 'element', 'jquery'], function () {
+        var layer = layui.layer, $ = layui.$, element = layui.element;
+        var device = layui.device();
+        //阻止IE7以下访问
+        if (device.ie && device.ie < 8) {
+            layer.alert('如果您非得使用 IE 浏览器访问社区，那么请使用 IE8+');
+        }
+    });
+
+</script>
+</body>
+</html>

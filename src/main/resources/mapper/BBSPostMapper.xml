@@ -1,0 +1,297 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.my.bbs.dao.BBSPostMapper">
+    <resultMap id="BaseResultMap" type="com.my.bbs.entity.BBSPost">
+        <id column="post_id" jdbcType="BIGINT" property="postId"/>
+        <result column="publish_user_id" jdbcType="BIGINT" property="publishUserId"/>
+        <result column="post_title" jdbcType="VARCHAR" property="postTitle"/>
+        <result column="post_category_id" jdbcType="INTEGER" property="postCategoryId"/>
+        <result column="post_category_name" jdbcType="VARCHAR" property="postCategoryName"/>
+        <result column="post_status" jdbcType="TINYINT" property="postStatus"/>
+        <result column="post_views" jdbcType="BIGINT" property="postViews"/>
+        <result column="post_comments" jdbcType="BIGINT" property="postComments"/>
+        <result column="post_collects" jdbcType="BIGINT" property="postCollects"/>
+        <result column="last_update_time" jdbcType="TIMESTAMP" property="lastUpdateTime"/>
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
+    </resultMap>
+    <resultMap extends="BaseResultMap" id="ResultMapWithBLOBs" type="com.my.bbs.entity.BBSPost">
+        <result column="post_content" jdbcType="LONGVARCHAR" property="postContent"/>
+    </resultMap>
+    <sql id="Base_Column_List">
+    post_id, publish_user_id, post_title, post_category_id, post_category_name,
+    post_status, post_views, post_comments, post_collects, last_update_time,
+    create_time
+    </sql>
+    <sql id="Blob_Column_List">
+        post_content
+    </sql>
+    <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="ResultMapWithBLOBs">
+        select
+        <include refid="Base_Column_List"/>
+        ,
+        <include refid="Blob_Column_List"/>
+        from tb_bbs_post
+        where post_id = #{postId,jdbcType=BIGINT} and post_status=1
+    </select>
+    <select id="selectByPrimaryKeys" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from tb_bbs_post
+        where post_status=1 and post_id in
+        <foreach item="postId" collection="postIds" open="(" separator="," close=")">
+            #{postId,jdbcType=BIGINT}
+        </foreach>
+    </select>
+    <select id="getHotTopicBBSPostList" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from tb_bbs_post
+        where post_status = 1  and create_time &gt; DATE_SUB(now(), INTERVAL 7 DAY) order by post_comments desc
+        <!-- 近七天的热议帖子，默认读取6条数据，可自行修改 -->
+        limit 6
+    </select>
+    <select id="findBBSPostList" parameterType="Map" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from tb_bbs_post where post_status = 1
+        <if test="categoryId!=null and categoryId!=''">
+            and post_category_id = #{categoryId}
+        </if>
+        <if test="keyword!=null and keyword!=''">
+            and post_title like CONCAT('%',#{keyword},'%')
+        </if>
+        <choose>
+            <!-- 周榜 -->
+            <when test="period!=null and period=='hot7'">
+                and create_time &gt; DATE_SUB(now(), INTERVAL 7 DAY)
+            </when>
+            <!-- 月榜 -->
+            <when test="period!=null and period=='hot30'">
+                and create_time &gt; DATE_SUB(now(), INTERVAL 30 DAY)
+            </when>
+            <!-- 全部数据 -->
+            <otherwise>
+            </otherwise>
+        </choose>
+        <choose>
+            <!-- 最新发布 -->
+            <when test="orderBy!=null and orderBy=='new'">
+                order by post_id desc
+            </when>
+            <!-- 热议 -->
+            <when test="orderBy!=null and orderBy=='comment'">
+                order by post_comments desc
+            </when>
+            <!-- 默认 -->
+            <otherwise>
+                order by last_update_time desc,post_views desc,post_comments desc
+            </otherwise>
+        </choose>
+        <if test="start!=null and limit!=null">
+            limit #{start},#{limit}
+        </if>
+    </select>
+    <select id="getMyBBSPostList" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from tb_bbs_post
+        where publish_user_id = #{userId} and post_status = 1
+        <choose>
+            <!-- 近30天 -->
+            <when test="period!=null and period=='recent'">
+                and create_time &gt; DATE_SUB(now(), INTERVAL 31 DAY)
+            </when>
+            <!-- 全部数据 -->
+            <otherwise>
+            </otherwise>
+        </choose>
+        order by post_id desc limit 10
+    </select>
+    <select id="getTotalBBSPosts" parameterType="Map" resultType="int">
+        select count(*)
+        from tb_bbs_post where post_status = 1
+        <if test="categoryId!=null and categoryId!=''">
+            and post_category_id = #{categoryId}
+        </if>
+        <if test="keyword!=null and keyword!=''">
+            and post_title like CONCAT('%',#{keyword},'%')
+        </if>
+        <choose>
+            <!-- 周榜 -->
+            <when test="period!=null and orderBy=='hot7'">
+                and create_time &gt; DATE_SUB(now(), INTERVAL 7 DAY)
+            </when>
+            <!-- 月榜 -->
+            <when test="period!=null and orderBy=='hot30'">
+                and create_time &gt; DATE_SUB(now(), INTERVAL 30 DAY)
+            </when>
+            <!-- 全部数据 -->
+            <otherwise>
+            </otherwise>
+        </choose>
+    </select>
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+        delete
+        from tb_bbs_post
+        where post_id = #{postId,jdbcType=BIGINT}
+    </delete>
+    <insert id="insert" parameterType="com.my.bbs.entity.BBSPost">
+        insert into tb_bbs_post (post_id, publish_user_id, post_title,
+                                 post_category_id, post_category_name,
+                                 post_status, post_views, post_comments,
+                                 post_collects, last_update_time,
+                                 create_time, post_content)
+        values (#{postId,jdbcType=BIGINT}, #{publishUserId,jdbcType=BIGINT}, #{postTitle,jdbcType=VARCHAR},
+                #{postCategoryId,jdbcType=INTEGER}, #{postCategoryName,jdbcType=VARCHAR},
+                #{postStatus,jdbcType=TINYINT}, #{postViews,jdbcType=BIGINT}, #{postComments,jdbcType=BIGINT},
+                #{postCollects,jdbcType=BIGINT}, #{lastUpdateTime,jdbcType=TIMESTAMP},
+                #{createTime,jdbcType=TIMESTAMP}, #{postContent,jdbcType=LONGVARCHAR})
+    </insert>
+    <insert id="insertSelective" parameterType="com.my.bbs.entity.BBSPost">
+        insert into tb_bbs_post
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="postId != null">
+                post_id,
+            </if>
+            <if test="publishUserId != null">
+                publish_user_id,
+            </if>
+            <if test="postTitle != null">
+                post_title,
+            </if>
+            <if test="postCategoryId != null">
+                post_category_id,
+            </if>
+            <if test="postCategoryName != null">
+                post_category_name,
+            </if>
+            <if test="postStatus != null">
+                post_status,
+            </if>
+            <if test="postViews != null">
+                post_views,
+            </if>
+            <if test="postComments != null">
+                post_comments,
+            </if>
+            <if test="postCollects != null">
+                post_collects,
+            </if>
+            <if test="lastUpdateTime != null">
+                last_update_time,
+            </if>
+            <if test="createTime != null">
+                create_time,
+            </if>
+            <if test="postContent != null">
+                post_content,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="postId != null">
+                #{postId,jdbcType=BIGINT},
+            </if>
+            <if test="publishUserId != null">
+                #{publishUserId,jdbcType=BIGINT},
+            </if>
+            <if test="postTitle != null">
+                #{postTitle,jdbcType=VARCHAR},
+            </if>
+            <if test="postCategoryId != null">
+                #{postCategoryId,jdbcType=INTEGER},
+            </if>
+            <if test="postCategoryName != null">
+                #{postCategoryName,jdbcType=VARCHAR},
+            </if>
+            <if test="postStatus != null">
+                #{postStatus,jdbcType=TINYINT},
+            </if>
+            <if test="postViews != null">
+                #{postViews,jdbcType=BIGINT},
+            </if>
+            <if test="postComments != null">
+                #{postComments,jdbcType=BIGINT},
+            </if>
+            <if test="postCollects != null">
+                #{postCollects,jdbcType=BIGINT},
+            </if>
+            <if test="lastUpdateTime != null">
+                #{lastUpdateTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="createTime != null">
+                #{createTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="postContent != null">
+                #{postContent,jdbcType=LONGVARCHAR},
+            </if>
+        </trim>
+    </insert>
+    <update id="updateByPrimaryKeySelective" parameterType="com.my.bbs.entity.BBSPost">
+        update tb_bbs_post
+        <set>
+            <if test="publishUserId != null">
+                publish_user_id = #{publishUserId,jdbcType=BIGINT},
+            </if>
+            <if test="postTitle != null">
+                post_title = #{postTitle,jdbcType=VARCHAR},
+            </if>
+            <if test="postCategoryId != null">
+                post_category_id = #{postCategoryId,jdbcType=INTEGER},
+            </if>
+            <if test="postCategoryName != null">
+                post_category_name = #{postCategoryName,jdbcType=VARCHAR},
+            </if>
+            <if test="postStatus != null">
+                post_status = #{postStatus,jdbcType=TINYINT},
+            </if>
+            <if test="postViews != null">
+                post_views = #{postViews,jdbcType=BIGINT},
+            </if>
+            <if test="postComments != null">
+                post_comments = #{postComments,jdbcType=BIGINT},
+            </if>
+            <if test="postCollects != null">
+                post_collects = #{postCollects,jdbcType=BIGINT},
+            </if>
+            <if test="lastUpdateTime != null">
+                last_update_time = #{lastUpdateTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="createTime != null">
+                create_time = #{createTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="postContent != null">
+                post_content = #{postContent,jdbcType=LONGVARCHAR},
+            </if>
+        </set>
+        where post_id = #{postId,jdbcType=BIGINT}
+    </update>
+    <update id="updateByPrimaryKeyWithBLOBs" parameterType="com.my.bbs.entity.BBSPost">
+        update tb_bbs_post
+        set publish_user_id    = #{publishUserId,jdbcType=BIGINT},
+            post_title         = #{postTitle,jdbcType=VARCHAR},
+            post_category_id   = #{postCategoryId,jdbcType=INTEGER},
+            post_category_name = #{postCategoryName,jdbcType=VARCHAR},
+            post_status        = #{postStatus,jdbcType=TINYINT},
+            post_views         = #{postViews,jdbcType=BIGINT},
+            post_comments      = #{postComments,jdbcType=BIGINT},
+            post_collects      = #{postCollects,jdbcType=BIGINT},
+            last_update_time   = #{lastUpdateTime,jdbcType=TIMESTAMP},
+            create_time        = #{createTime,jdbcType=TIMESTAMP},
+            post_content       = #{postContent,jdbcType=LONGVARCHAR}
+        where post_id = #{postId,jdbcType=BIGINT}
+    </update>
+    <update id="updateByPrimaryKey" parameterType="com.my.bbs.entity.BBSPost">
+        update tb_bbs_post
+        set publish_user_id    = #{publishUserId,jdbcType=BIGINT},
+            post_title         = #{postTitle,jdbcType=VARCHAR},
+            post_category_id   = #{postCategoryId,jdbcType=INTEGER},
+            post_category_name = #{postCategoryName,jdbcType=VARCHAR},
+            post_status        = #{postStatus,jdbcType=TINYINT},
+            post_views         = #{postViews,jdbcType=BIGINT},
+            post_comments      = #{postComments,jdbcType=BIGINT},
+            post_collects      = #{postCollects,jdbcType=BIGINT},
+            last_update_time   = #{lastUpdateTime,jdbcType=TIMESTAMP},
+            create_time        = #{createTime,jdbcType=TIMESTAMP}
+        where post_id = #{postId,jdbcType=BIGINT}
+    </update>
+</mapper>

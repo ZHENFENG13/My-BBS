@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.my.bbs.dao.BBSPostCommentMapper">
+  <resultMap id="BaseResultMap" type="com.my.bbs.entity.BBSPostComment">
+    <id column="comment_id" jdbcType="BIGINT" property="commentId" />
+    <result column="post_id" jdbcType="BIGINT" property="postId" />
+    <result column="comment_user_id" jdbcType="BIGINT" property="commentUserId" />
+    <result column="comment_body" jdbcType="VARCHAR" property="commentBody" />
+    <result column="parent_comment_user_id" jdbcType="BIGINT" property="parentCommentUserId" />
+    <result column="comment_create_time" jdbcType="TIMESTAMP" property="commentCreateTime" />
+    <result column="is_deleted" jdbcType="TINYINT" property="isDeleted" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    comment_id, post_id, comment_user_id, comment_body, parent_comment_user_id, comment_create_time, 
+    is_deleted
+  </sql>
+  <select id="findCommentList" parameterType="Map" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List"/>
+    from tb_post_comment where is_deleted = 0
+    <if test="postId!=null and postId!=''">
+      and post_id = #{postId}
+    </if>
+    order by comment_id desc
+    <if test="start!=null and limit!=null">
+      limit #{start},#{limit}
+    </if>
+  </select>
+  <select id="getRecentCommentListByUserId" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List"/>
+    from tb_post_comment
+    where comment_user_id = #{userId}
+    and comment_create_time &gt; DATE_SUB(now(), INTERVAL 7 DAY)
+    and is_deleted = 0
+    order by comment_id desc
+    limit 6
+  </select>
+  <select id="getTotalComments" parameterType="Map" resultType="int">
+    select count(*)
+    from tb_post_comment where is_deleted = 0
+    <if test="postId!=null and postId!=''">
+      and post_id = #{postId}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from tb_post_comment
+    where comment_id = #{commentId,jdbcType=BIGINT} and is_deleted =0
+  </select>
+  <update id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    update tb_post_comment
+    set is_deleted = 1
+    where comment_id = #{commentId,jdbcType=BIGINT}
+  </update>
+  <insert id="insert" parameterType="com.my.bbs.entity.BBSPostComment">
+    insert into tb_post_comment (comment_id, post_id, comment_user_id, 
+      comment_body, parent_comment_user_id, comment_create_time, 
+      is_deleted)
+    values (#{commentId,jdbcType=BIGINT}, #{postId,jdbcType=BIGINT}, #{commentUserId,jdbcType=BIGINT}, 
+      #{commentBody,jdbcType=VARCHAR}, #{parentCommentUserId,jdbcType=BIGINT}, #{commentCreateTime,jdbcType=TIMESTAMP}, 
+      #{isDeleted,jdbcType=TINYINT})
+  </insert>
+  <insert id="insertSelective" parameterType="com.my.bbs.entity.BBSPostComment">
+    insert into tb_post_comment
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="commentId != null">
+        comment_id,
+      </if>
+      <if test="postId != null">
+        post_id,
+      </if>
+      <if test="commentUserId != null">
+        comment_user_id,
+      </if>
+      <if test="commentBody != null">
+        comment_body,
+      </if>
+      <if test="parentCommentUserId != null">
+        parent_comment_user_id,
+      </if>
+      <if test="commentCreateTime != null">
+        comment_create_time,
+      </if>
+      <if test="isDeleted != null">
+        is_deleted,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="commentId != null">
+        #{commentId,jdbcType=BIGINT},
+      </if>
+      <if test="postId != null">
+        #{postId,jdbcType=BIGINT},
+      </if>
+      <if test="commentUserId != null">
+        #{commentUserId,jdbcType=BIGINT},
+      </if>
+      <if test="commentBody != null">
+        #{commentBody,jdbcType=VARCHAR},
+      </if>
+      <if test="parentCommentUserId != null">
+        #{parentCommentUserId,jdbcType=BIGINT},
+      </if>
+      <if test="commentCreateTime != null">
+        #{commentCreateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="isDeleted != null">
+        #{isDeleted,jdbcType=TINYINT},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.my.bbs.entity.BBSPostComment">
+    update tb_post_comment
+    <set>
+      <if test="postId != null">
+        post_id = #{postId,jdbcType=BIGINT},
+      </if>
+      <if test="commentUserId != null">
+        comment_user_id = #{commentUserId,jdbcType=BIGINT},
+      </if>
+      <if test="commentBody != null">
+        comment_body = #{commentBody,jdbcType=VARCHAR},
+      </if>
+      <if test="parentCommentUserId != null">
+        parent_comment_user_id = #{parentCommentUserId,jdbcType=BIGINT},
+      </if>
+      <if test="commentCreateTime != null">
+        comment_create_time = #{commentCreateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="isDeleted != null">
+        is_deleted = #{isDeleted,jdbcType=TINYINT},
+      </if>
+    </set>
+    where comment_id = #{commentId,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.my.bbs.entity.BBSPostComment">
+    update tb_post_comment
+    set post_id = #{postId,jdbcType=BIGINT},
+      comment_user_id = #{commentUserId,jdbcType=BIGINT},
+      comment_body = #{commentBody,jdbcType=VARCHAR},
+      parent_comment_user_id = #{parentCommentUserId,jdbcType=BIGINT},
+      comment_create_time = #{commentCreateTime,jdbcType=TIMESTAMP},
+      is_deleted = #{isDeleted,jdbcType=TINYINT}
+    where comment_id = #{commentId,jdbcType=BIGINT}
+  </update>
+</mapper>

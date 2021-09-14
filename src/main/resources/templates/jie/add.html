@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="header::head-fragment('发布帖子')">
+</head>
+<body>
+<div th:replace="header::header-fragment"></div>
+
+<div class="layui-container fly-marginTop">
+    <div class="fly-panel" pad20 style="padding-top: 5px;">
+        <!--<div class="fly-none">没有权限</div>-->
+        <div class="layui-form layui-form-pane">
+            <div class="layui-tab layui-tab-brief" lay-filter="user">
+                <ul class="layui-tab-title">
+                    <li class="layui-this">发表新帖<!-- 编辑帖子 --></li>
+                </ul>
+                <div class="layui-form layui-tab-content" id="LAY_ucm" style="padding: 20px 0;">
+                    <div class="layui-tab-item layui-show">
+                        <form method="post" id="postForm" onsubmit="return false;" action="##">
+                            <div class="layui-row layui-col-space15 layui-form-item">
+                                <div class="layui-col-md6">
+                                    <label for="postTitle" class="layui-form-label">标题</label>
+                                    <div class="layui-input-block">
+                                        <input type="text" id="postTitle" name="postTitle" required
+
+                                               autocomplete="off" class="layui-input">
+                                    </div>
+                                </div>
+                                <div class="layui-col-md6">
+                                    <label class="layui-form-label">所在专栏</label>
+                                    <div class="layui-input-block">
+                                        <select name="class" lay-filter="column"
+                                                id="postCategoryId">
+                                            <option value="0"></option>
+                                            <th:block th:unless="${null == bbsPostCategories}">
+                                                <th:block th:each="c : ${bbsPostCategories}">
+                                                    <option th:value="${c.categoryId}" th:text="${c.categoryName}">提问
+                                                    </option>
+                                                </th:block>
+                                            </th:block>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="layui-form-item layui-form-text">
+                                <div class="layui-input-block">
+                                    <div id="wangEditor" name="postContent" required
+                                         placeholder="详细描述"
+                                         style="height: 260px;"></div>
+                                </div>
+                            </div>
+                            <div class="layui-form-item" style="margin-top: 56px;">
+                                <label for="verifyCode" class="layui-form-label">验证码</label>
+                                <div class="layui-input-inline">
+                                    <input type="text" id="verifyCode" name="verifyCode" required
+                                           placeholder="验证码" autocomplete="off" class="layui-input">
+                                </div>
+                                <div class="layui-form-mid">
+                                    <span style="color: #c00;"><img data-tooltip="看不清楚？换一张"
+                                                                    th:src="@{/common/captcha}"
+                                                                    onclick="this.src='/common/captcha?d='+new Date()*1"
+                                                                    alt="单击图片刷新！"></span>
+                                </div>
+                            </div>
+                            <div class="layui-form-item">
+                                <button class="layui-btn" lay-filter="*" lay-submit onclick="addBBSPost()">立即发布</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="fly-footer">
+    <p>My-BBS社区 2021 &copy; <a href="https://github.com/ZHENFENG13/My-BBS" target="_blank">十三</a></p>
+</div>
+
+<script th:src="@{/js/public.js}"></script>
+<script th:src="@{/layui/layui.js}"></script>
+<!-- wangEditor -->
+<script type="text/javascript" src="//unpkg.com/wangeditor/dist/wangEditor.min.js"></script>
+
+<script type="text/javascript">
+    layui.use(['layer', 'element', 'jquery', 'form'], function () {
+        var layer = layui.layer, $ = layui.$, element = layui.element, form = layui.form;
+        var editorD;
+
+        //富文本编辑器 用于商品详情编辑
+        const E = window.wangEditor;
+        editorD = new E('#wangEditor')
+        // 设置编辑区域高度为 260px
+        editorD.config.height = 260
+        editorD.config.zIndex = 1
+        //配置服务端图片上传地址
+        editorD.config.uploadImgServer = '/uploadFiles'
+        editorD.config.uploadFileName = 'files'
+        //限制图片大小 2M
+        editorD.config.uploadImgMaxSize = 2 * 1024 * 1024
+        //限制一次最多能传几张图片 一次最多上传 5 个图片
+        editorD.config.uploadImgMaxLength = 5
+        //隐藏插入网络图片的功能
+        editorD.config.showLinkImg = false
+        editorD.config.uploadImgHooks = {
+            // 图片上传并返回了结果，图片插入已成功
+            success: function (xhr) {
+                console.log('success', xhr)
+            },
+            // 图片上传并返回了结果，但图片插入时出错了
+            fail: function (xhr, editor, resData) {
+                console.log('fail', resData)
+            },
+            // 上传图片出错，一般为 http 请求的错误
+            error: function (xhr, editor, resData) {
+                console.log('error', xhr, resData)
+            },
+            // 上传图片超时
+            timeout: function (xhr) {
+                console.log('timeout')
+            },
+            customInsert: function (insertImgFn, result) {
+                if (result != null && result.resultCode == 200) {
+                    // insertImgFn 可把图片插入到编辑器，传入图片 src ，执行函数即可
+                    result.data.forEach(img => {
+                        insertImgFn(img)
+                    });
+                } else {
+                    alert("error");
+                }
+            }
+        }
+        editorD.create();
+
+        window.addBBSPost = function () {
+            var postTitle = $("#postTitle").val();
+            if (isNull(postTitle)) {
+                layer.alert('请输入标题!', {title: '提醒', skin: 'layui-layer-molv', icon: 2});
+                return;
+            }
+            var verifyCode = $("#verifyCode").val();
+            if (!validLength(verifyCode, 5)) {
+                layer.alert('请输入正确的验证码!', {title: '提醒', skin: 'layui-layer-molv', icon: 2});
+                return;
+            }
+            var postCategoryId = $('#postCategoryId option:selected').val();
+            if (isNull(postCategoryId)) {
+                layer.alert('请选择分类!', {title: '提醒', skin: 'layui-layer-molv', icon: 2});
+                return;
+            }
+
+            var postContent = editorD.txt.html();
+
+            if (!validLength(postContent, 100000)) {
+                layer.alert('内容超出长度!', {title: '提醒', skin: 'layui-layer-molv', icon: 2});
+                return;
+            }
+            var url = '/addPost';
+            var data = {
+                "postTitle": postTitle, "verifyCode": verifyCode,
+                "postCategoryId": postCategoryId, "postContent": postContent
+            };
+            $.ajax({
+                type: 'POST',//方法类型
+                url: url,
+                data: data,
+                success: function (result) {
+                    if (result.resultCode == 200) {
+                        window.location.href = '/index';
+                    } else {
+                        layer.msg(result.message);
+                    }
+                    ;
+                },
+                error: function () {
+                    layer.alert('操作失败!', {title: '提醒', skin: 'layui-layer-molv', icon: 2});
+                }
+            });
+        }
+    });
+</script>
+</body>
+</html>

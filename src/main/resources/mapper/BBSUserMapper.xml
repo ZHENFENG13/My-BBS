@@ -1,0 +1,186 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.my.bbs.dao.BBSUserMapper">
+  <resultMap id="BaseResultMap" type="com.my.bbs.entity.BBSUser">
+    <id column="user_id" jdbcType="BIGINT" property="userId" />
+    <result column="login_name" jdbcType="VARCHAR" property="loginName" />
+    <result column="password_md5" jdbcType="VARCHAR" property="passwordMd5" />
+    <result column="nick_name" jdbcType="VARCHAR" property="nickName" />
+    <result column="head_img_url" jdbcType="VARCHAR" property="headImgUrl" />
+    <result column="gender" jdbcType="VARCHAR" property="gender" />
+    <result column="location" jdbcType="VARCHAR" property="location" />
+    <result column="introduce" jdbcType="VARCHAR" property="introduce" />
+    <result column="user_status" jdbcType="TINYINT" property="userStatus" />
+    <result column="last_login_time" jdbcType="TIMESTAMP" property="lastLoginTime" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    user_id, login_name, password_md5, nick_name, head_img_url, gender, location, introduce, 
+    user_status, last_login_time, create_time
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from tb_bbs_user
+    where user_id = #{userId,jdbcType=BIGINT}
+  </select>
+  <select id="selectByPrimaryKeys" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from tb_bbs_user
+    where user_id in
+    <foreach item="userId" collection="userIds" open="(" separator="," close=")">
+      #{userId,jdbcType=BIGINT}
+    </foreach>
+  </select>
+  <select id="selectByLoginName" resultType="com.my.bbs.entity.BBSUser">
+    select
+    <include refid="Base_Column_List" />
+    from tb_bbs_user
+    where login_name = #{loginName,jdbcType=VARCHAR} limit 1
+  </select>
+
+  <select id="selectByLoginNameAndPasswd" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List"/>
+    from tb_bbs_user
+    where login_name = #{loginName} and password_md5 = #{password}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from tb_bbs_user
+    where user_id = #{userId,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" parameterType="com.my.bbs.entity.BBSUser">
+    insert into tb_bbs_user (user_id, login_name, password_md5, 
+      nick_name, head_img_url, gender, 
+      location, introduce, user_status, 
+      last_login_time, create_time)
+    values (#{userId,jdbcType=BIGINT}, #{loginName,jdbcType=VARCHAR}, #{passwordMd5,jdbcType=VARCHAR}, 
+      #{nickName,jdbcType=VARCHAR}, #{headImgUrl,jdbcType=VARCHAR}, #{gender,jdbcType=VARCHAR}, 
+      #{location,jdbcType=VARCHAR}, #{introduce,jdbcType=VARCHAR}, #{userStatus,jdbcType=TINYINT}, 
+      #{lastLoginTime,jdbcType=TIMESTAMP}, #{createTime,jdbcType=TIMESTAMP})
+  </insert>
+  <insert id="insertSelective" parameterType="com.my.bbs.entity.BBSUser">
+    insert into tb_bbs_user
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="userId != null">
+        user_id,
+      </if>
+      <if test="loginName != null">
+        login_name,
+      </if>
+      <if test="passwordMd5 != null">
+        password_md5,
+      </if>
+      <if test="nickName != null">
+        nick_name,
+      </if>
+      <if test="headImgUrl != null">
+        head_img_url,
+      </if>
+      <if test="gender != null">
+        gender,
+      </if>
+      <if test="location != null">
+        location,
+      </if>
+      <if test="introduce != null">
+        introduce,
+      </if>
+      <if test="userStatus != null">
+        user_status,
+      </if>
+      <if test="lastLoginTime != null">
+        last_login_time,
+      </if>
+      <if test="createTime != null">
+        create_time,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="userId != null">
+        #{userId,jdbcType=BIGINT},
+      </if>
+      <if test="loginName != null">
+        #{loginName,jdbcType=VARCHAR},
+      </if>
+      <if test="passwordMd5 != null">
+        #{passwordMd5,jdbcType=VARCHAR},
+      </if>
+      <if test="nickName != null">
+        #{nickName,jdbcType=VARCHAR},
+      </if>
+      <if test="headImgUrl != null">
+        #{headImgUrl,jdbcType=VARCHAR},
+      </if>
+      <if test="gender != null">
+        #{gender,jdbcType=VARCHAR},
+      </if>
+      <if test="location != null">
+        #{location,jdbcType=VARCHAR},
+      </if>
+      <if test="introduce != null">
+        #{introduce,jdbcType=VARCHAR},
+      </if>
+      <if test="userStatus != null">
+        #{userStatus,jdbcType=TINYINT},
+      </if>
+      <if test="lastLoginTime != null">
+        #{lastLoginTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="createTime != null">
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.my.bbs.entity.BBSUser">
+    update tb_bbs_user
+    <set>
+      <if test="loginName != null">
+        login_name = #{loginName,jdbcType=VARCHAR},
+      </if>
+      <if test="passwordMd5 != null">
+        password_md5 = #{passwordMd5,jdbcType=VARCHAR},
+      </if>
+      <if test="nickName != null">
+        nick_name = #{nickName,jdbcType=VARCHAR},
+      </if>
+      <if test="headImgUrl != null">
+        head_img_url = #{headImgUrl,jdbcType=VARCHAR},
+      </if>
+      <if test="gender != null">
+        gender = #{gender,jdbcType=VARCHAR},
+      </if>
+      <if test="location != null">
+        location = #{location,jdbcType=VARCHAR},
+      </if>
+      <if test="introduce != null">
+        introduce = #{introduce,jdbcType=VARCHAR},
+      </if>
+      <if test="userStatus != null">
+        user_status = #{userStatus,jdbcType=TINYINT},
+      </if>
+      <if test="lastLoginTime != null">
+        last_login_time = #{lastLoginTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="createTime != null">
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where user_id = #{userId,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.my.bbs.entity.BBSUser">
+    update tb_bbs_user
+    set login_name = #{loginName,jdbcType=VARCHAR},
+      password_md5 = #{passwordMd5,jdbcType=VARCHAR},
+      nick_name = #{nickName,jdbcType=VARCHAR},
+      head_img_url = #{headImgUrl,jdbcType=VARCHAR},
+      gender = #{gender,jdbcType=VARCHAR},
+      location = #{location,jdbcType=VARCHAR},
+      introduce = #{introduce,jdbcType=VARCHAR},
+      user_status = #{userStatus,jdbcType=TINYINT},
+      last_login_time = #{lastLoginTime,jdbcType=TIMESTAMP},
+      create_time = #{createTime,jdbcType=TIMESTAMP}
+    where user_id = #{userId,jdbcType=BIGINT}
+  </update>
+</mapper>

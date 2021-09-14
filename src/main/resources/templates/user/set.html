@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="header::head-fragment('基本设置')">
+</head>
+<body>
+<div th:replace="header::header-fragment"></div>
+
+<div class="layui-container fly-marginTop fly-user-main">
+    <ul class="layui-nav layui-nav-tree layui-inline" lay-filter="user">
+        <li class="layui-nav-item">
+            <a th:href="@{${'/userCenter/'+bbsUser.userId}}">
+                <i class="layui-icon">&#xe609;</i>
+                我的主页
+            </a>
+        </li>
+        <li class="layui-nav-item">
+            <a th:href="@{/myCenter}">
+                <i class="layui-icon">&#xe612;</i>
+                用户中心
+            </a>
+        </li>
+        <li class="layui-nav-item layui-this">
+            <a th:href="@{/userSet}">
+                <i class="layui-icon">&#xe620;</i>
+                基本设置
+            </a>
+        </li>
+    </ul>
+
+    <div class="fly-panel fly-panel-user" pad20>
+        <div class="layui-tab layui-tab-brief" lay-filter="user">
+            <ul class="layui-tab-title" id="LAY_mine">
+                <li class="layui-this" lay-id="info">我的资料</li>
+                <li lay-id="avatar">头像</li>
+                <li lay-id="pass">密码</li>
+            </ul>
+            <div class="layui-tab-content" style="padding: 20px 0;">
+                <div class="layui-form layui-form-pane layui-tab-item layui-show">
+                    <form method="post" id="updateInfoForm" onsubmit="return false;" action="##">
+                        <div class="layui-form-item">
+                            <label for="loginName" class="layui-form-label">邮箱</label>
+                            <div class="layui-input-inline">
+                                <input type="text" id="loginName" name="loginName"
+                                       autocomplete="off" th:value="${bbsUser.loginName}" disabled class="layui-input">
+                            </div>
+                            <div class="layui-form-mid layui-word-aux">登录邮箱不可更改</div>
+                        </div>
+                        <div class="layui-form-item">
+                            <label for="nickName" class="layui-form-label">昵称</label>
+                            <div class="layui-input-inline">
+                                <input type="text" id="nickName" name="nickName" required lay-verify="required"
+                                       autocomplete="off" th:value="${bbsUser.nickName}" class="layui-input">
+                            </div>
+                            <div class="layui-form-mid layui-word-aux">支持2-8位的英文和数字昵称</div>
+                        </div>
+                        <div class="layui-form-item">
+                            <label for="userGender" class="layui-form-label">性别</label>
+                            <div class="layui-input-inline">
+                                <select name="userGender" id="userGender">
+                                    <option value="1" th:selected="${bbsUser.gender=='男'} ?true:false">男</option>
+                                    <option value="2" th:selected="${bbsUser.gender=='女'} ?true:false">女</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="layui-form-item">
+                            <label for="location" class="layui-form-label">城市</label>
+                            <div class="layui-input-inline">
+                                <input type="text" id="location" name="location" autocomplete="off"
+                                       th:value="${bbsUser.location}"
+                                       class="layui-input">
+                            </div>
+                        </div>
+                        <div class="layui-form-item layui-form-text">
+                            <label for="introduce" class="layui-form-label">签名</label>
+                            <div class="layui-input-block">
+                                <textarea placeholder="随便写些什么刷下存在感" id="introduce" name="introduce" autocomplete="off"
+                                          th:text="${bbsUser.introduce}"
+                                          class="layui-textarea" style="height: 80px;"></textarea>
+                            </div>
+                        </div>
+                        <div class="layui-form-item">
+                            <button class="layui-btn" key="set-mine" lay-filter="*" lay-submit onclick="updateInfo()">
+                                确认修改
+                            </button>
+                        </div>
+                    </form>
+                </div>
+
+                <div class="layui-form layui-form-pane layui-tab-item">
+                    <div class="layui-form-item">
+                        <div class="avatar-add">
+                            <p>建议尺寸168*168，支持jpg、png、gif，最大不能超过1M</p>
+                            <button type="button" id="uploadHeadImg" class="layui-btn upload-img">
+                                <i class="layui-icon">&#xe67c;</i>上传头像
+                            </button>
+                            <img id="userHeadImg" th:src="@{${bbsUser.headImgUrl}}">
+                            <span class="loading"></span>
+                        </div>
+                    </div>
+                    <div class="layui-form-item">
+                        <button class="layui-btn" key="set-mine" lay-filter="*" lay-submit onclick="updateHeadImg()">
+                            确认修改
+                        </button>
+                    </div>
+                </div>
+
+                <div class="layui-form layui-form-pane layui-tab-item">
+                    <form method="post" id="passwordForm" onsubmit="return false;" action="##">
+                        <div class="layui-form-item">
+                            <label for="originalPassword" class="layui-form-label">当前密码</label>
+                            <div class="layui-input-inline">
+                                <input type="password" id="originalPassword" name="originalPassword" required
+                                       lay-verify="required"
+                                       autocomplete="off" class="layui-input">
+                            </div>
+                        </div>
+                        <div class="layui-form-item">
+                            <label for="newPassword" class="layui-form-label">新密码</label>
+                            <div class="layui-input-inline">
+                                <input type="password" id="newPassword" name="newPassword" required
+                                       lay-verify="required"
+                                       autocomplete="off" class="layui-input">
+                            </div>
+                            <div class="layui-form-mid layui-word-aux">6到20个字符</div>
+                        </div>
+                        <div class="layui-form-item">
+                            <button class="layui-btn" key="set-mine" lay-filter="*" lay-submit onclick="updatePassword()">
+                                确认修改
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+</div>
+
+<div class="fly-footer">
+    <p>My-BBS社区 2021 &copy; <a href="https://github.com/ZHENFENG13/My-BBS" target="_blank">十三</a></p>
+</div>
+
+<script th:src="@{/layui/layui.js}"></script>
+<script th:src="@{/js/public.js}"></script>
+<script th:src="@{/js/ajaxupload/ajaxupload.js}"></script>
+
+<script type="text/javascript">
+    layui.use(['layer', 'element', 'jquery', 'form'], function () {
+        var layer = layui.layer, $ = layui.$, element = layui.element, form = layui.form;
+        var device = layui.device();
+        //阻止IE7以下访问
+        if (device.ie && device.ie < 8) {
+            layer.alert('如果您非得使用 IE 浏览器访问社区，那么请使用 IE8+');
+        }
+
+        //图片上传插件初始化 用于头像上传
+        new AjaxUpload('#uploadHeadImg', {
+            action: '/uploadFile',
+            name: 'file',
+            autoSubmit: true,
+            responseType: "json",
+            onSubmit: function (file, extension) {
+                if (!(extension && /^(jpg|jpeg|png|gif)$/.test(extension.toLowerCase()))) {
+                    alert('只支持jpg、png、gif格式的文件！');
+                    return false;
+                }
+            },
+            onComplete: function (file, r) {
+                if (r != null && r.resultCode == 200) {
+                    $("#userHeadImg").attr("src", r.data);
+                    return false;
+                } else {
+                    alert("error");
+                }
+            }
+        });
+
+        //修改个人信息
+        window.updateInfo = function () {
+            var $ = layui.$;
+            var nickName = $("#nickName").val();
+            if (!validUserName(nickName)) {
+                layer.alert('请输入正确的昵称!', {title: '提醒', skin: 'layui-layer-molv', icon: 2});
+                return false;
+            }
+            var userGender = $('#userGender option:selected').val();
+            if (isNull(userGender)) {
+                layer.alert('请选择性别!', {title: '提醒', skin: 'layui-layer-molv', icon: 2});
+                return;
+            }
+            var location = $("#location").val();
+            if (isNull(location)) {
+                layer.alert('请输入所在城市!', {title: '提醒', skin: 'layui-layer-molv', icon: 2});
+                return;
+            }
+            var introduce = $("#introduce").val();
+            if (isNull(introduce)) {
+                layer.alert('请输入个性签名!', {title: '提醒', skin: 'layui-layer-molv', icon: 2});
+                return;
+            }
+            var params = $("#updateInfoForm").serialize();
+            var url = '/updateUserInfo';
+            $.ajax({
+                type: 'POST',//方法类型
+                url: url,
+                data: params,
+                success: function (result) {
+                    if (result.resultCode == 200) {
+                        layer.alert('修改成功!', {title: '信息', skin: 'layui-layer-molv', icon: 1});
+                    } else {
+                        layer.msg(result.message);
+                    }
+                    ;
+                },
+                error: function () {
+                    layer.alert('操作失败!', {title: '提醒', skin: 'layui-layer-molv', icon: 2});
+                }
+            });
+        }
+
+        //修改头像
+        window.updateHeadImg = function () {
+            var $ = layui.$;
+            var userHeadImg = $('#userHeadImg')[0].src;
+            if (isNull(userHeadImg)) {
+                layer.alert('头像不能为空字符串!', {title: '提醒', skin: 'layui-layer-molv', icon: 2});
+                return false;
+            }
+            var url = '/updateHeadImg?userHeadImg='+userHeadImg;
+            $.ajax({
+                type: 'POST',//方法类型
+                url: url,
+                success: function (result) {
+                    if (result.resultCode == 200) {
+                        layer.alert('上传成功!', {title: '信息', skin: 'layui-layer-molv', icon: 1});
+                    } else {
+                        layer.msg(result.message);
+                    }
+                    ;
+                },
+                error: function () {
+                    layer.alert('操作失败!', {title: '提醒', skin: 'layui-layer-molv', icon: 2});
+                }
+            });
+        }
+
+        //修改密码
+        window.updatePassword = function () {
+            var $ = layui.$;
+            var originalPassword = $("#originalPassword").val();
+            if (!validPassword(originalPassword)) {
+                layer.alert('请输入正确的密码格式!', {title: '提醒', skin: 'layui-layer-molv', icon: 2});
+                return false;
+            }
+            var newPassword = $("#newPassword").val();
+            if (!validPassword(newPassword)) {
+                layer.alert('请输入正确的密码格式!', {title: '提醒', skin: 'layui-layer-molv', icon: 2});
+                return false;
+            }
+            if (newPassword != newPassword) {
+                layer.alert('确认密码与密码字段不相同!', {title: '提醒', skin: 'layui-layer-molv', icon: 2});
+                return false;
+            }
+            var params = $("#passwordForm").serialize();
+            var url = '/updatePassword';
+            $.ajax({
+                type: 'POST',//方法类型
+                url: url,
+                data: params,
+                success: function (result) {
+                    if (result.resultCode == 200) {
+                        layer.alert('修改成功!', {title: '信息', skin: 'layui-layer-molv', icon: 1});
+                    } else {
+                        layer.msg(result.message);
+                    }
+                    ;
+                },
+                error: function () {
+                    layer.alert('操作失败!', {title: '提醒', skin: 'layui-layer-molv', icon: 2});
+                }
+            });
+        }
+    });
+</script>
+</body>
+</html>
