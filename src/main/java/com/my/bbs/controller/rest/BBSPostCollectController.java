@@ -1,21 +1,16 @@
 package com.my.bbs.controller.rest;
 
 import com.my.bbs.common.Constants;
-import com.my.bbs.entity.BBSPost;
 import com.my.bbs.entity.BBSUser;
-import com.my.bbs.service.BBSPostCategoryService;
 import com.my.bbs.service.BBSPostCollectService;
-import com.my.bbs.service.BBSPostService;
-import com.my.bbs.service.BBSUserService;
 import com.my.bbs.util.Result;
 import com.my.bbs.util.ResultGenerator;
+import jakarta.annotation.Resource;
+import jakarta.servlet.http.HttpSession;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
-
-import javax.annotation.Resource;
-import javax.servlet.http.HttpSession;
 
 @Controller
 public class BBSPostCollectController {

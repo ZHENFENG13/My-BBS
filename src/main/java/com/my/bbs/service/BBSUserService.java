@@ -8,9 +8,7 @@
 package com.my.bbs.service;
 
 import com.my.bbs.entity.BBSUser;
-
-import javax.servlet.http.HttpSession;
-import java.util.List;
+import jakarta.servlet.http.HttpSession;
 
 public interface BBSUserService {
 

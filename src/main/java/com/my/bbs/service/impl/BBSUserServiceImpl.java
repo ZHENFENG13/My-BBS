@@ -14,12 +14,11 @@ import com.my.bbs.entity.BBSUser;
 import com.my.bbs.service.BBSUserService;
 import com.my.bbs.util.MD5Util;
 import com.my.bbs.util.SystemUtil;
+import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import javax.servlet.http.HttpSession;
 import java.util.Date;
-import java.util.List;
 
 @Service
 public class BBSUserServiceImpl implements BBSUserService {
