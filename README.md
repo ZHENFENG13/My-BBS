@@ -4,6 +4,13 @@
 
 My BBS 是由 SpringBoot + Mybatis + Thymeleaf 等技术实现的 Java 论坛系统，页面美观、功能齐全、部署简单及完善的代码，一定会给学习者和使用者带来极大的帮助。
 
+当前分支的 Spring Boot 版本为 2.4.0，想要学习和使用其它版本可以直接点击下方的分支名称跳转至对应的仓库分支中。
+
+| 分支名称                                                    | Spring Boot Version |
+| ------------------------------------------------------------ | ------------------- |
+| [spring-boot-3.x](https://github.com/ZHENFENG13/My-BBS/tree/spring-boot-3.x) | 3.0.0       |
+| [main](https://github.com/ZHENFENG13/My-BBS)            | 2.4.0               |
+
 - **一个以 Spring Boot 技术栈实现的 BBS 论坛实战项目；**
 - **你也可以把它作为 Spring Boot 技术栈的学习项目，My BBS 足够符合要求，且代码和功能完备；**
 - **技术栈新颖且知识点丰富，学习后可以提升大家对于知识的理解和掌握，对于提升你的市场竞争力有一定的帮助。**
