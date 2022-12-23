@@ -1,9 +1,9 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-<head th:replace="header::head-fragment('基本设置')">
+<head th:replace="~{header::head-fragment('基本设置')}">
 </head>
 <body>
-<div th:replace="header::header-fragment"></div>
+<div th:replace="~{header::header-fragment}"></div>
 
 <div class="layui-container fly-marginTop fly-user-main">
     <ul class="layui-nav layui-nav-tree layui-inline" lay-filter="user">

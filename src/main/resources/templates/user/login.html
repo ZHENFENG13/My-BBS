@@ -1,9 +1,9 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-<head th:replace="header::head-fragment('首页')">
+<head th:replace="~{header::head-fragment('首页')}">
 </head>
 <body>
-<div th:replace="header::header-fragment"></div>
+<div th:replace="~{header::header-fragment}"></div>
 
 <div class="layui-container fly-marginTop">
     <div class="fly-panel fly-panel-user" pad20>

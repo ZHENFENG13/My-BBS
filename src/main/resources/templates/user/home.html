@@ -1,10 +1,10 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-<head th:replace="header::head-fragment('用户主页')">
+<head th:replace="~{header::head-fragment('用户主页')}">
 </head>
 <body style="margin-top: 65px;">
 
-<div th:replace="header::header-fragment"></div>
+<div th:replace="~{header::header-fragment}"></div>
 
 <div class="fly-home fly-panel">
     <img th:src="@{${bbsUser.headImgUrl}}" th:alt="${bbsUser.nickName}">
