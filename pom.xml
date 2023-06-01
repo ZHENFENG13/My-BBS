@@ -5,7 +5,7 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>3.0.1</version>
+        <version>3.1.0</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>com.my.bbs</groupId>
@@ -18,7 +18,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <java.version>17</java.version>
-        <mybatis-stater.version>3.0.1</mybatis-stater.version>
+        <mybatis-stater.version>3.0.2</mybatis-stater.version>
         <easy-captcha.version>1.6.2</easy-captcha.version>
     </properties>
 
@@ -40,8 +40,8 @@
         </dependency>
 
         <dependency>
-            <groupId>mysql</groupId>
-            <artifactId>mysql-connector-java</artifactId>
+            <groupId>com.mysql</groupId>
+            <artifactId>mysql-connector-j</artifactId>
             <scope>runtime</scope>
         </dependency>
 

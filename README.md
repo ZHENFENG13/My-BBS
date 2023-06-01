@@ -4,11 +4,11 @@
 
 My BBS 是由 SpringBoot + Mybatis + Thymeleaf 等技术实现的 Java 论坛系统，页面美观、功能齐全、部署简单及完善的代码，一定会给学习者和使用者带来极大的帮助。
 
-当前分支的 Spring Boot 版本为 3.0.0，Java 最低版本要求为 17，想要学习和使用其它版本可以直接点击下方的分支名称跳转至对应的仓库分支中。
+当前分支的 Spring Boot 版本为 3.x，Java 最低版本要求为 17，想要学习和使用其它版本可以直接点击下方的分支名称跳转至对应的仓库分支中。
 
 | 分支名称                                                    | Spring Boot Version |
 | ------------------------------------------------------------ | ------------------- |
-| [spring-boot-3.x](https://github.com/ZHENFENG13/My-BBS/tree/spring-boot-3.x) | 3.0.0       |
+| [spring-boot-3.x](https://github.com/ZHENFENG13/My-BBS/tree/spring-boot-3.x) | 3.1.0       |
 | [main](https://github.com/ZHENFENG13/My-BBS)            | 2.4.0               |
 
 - **一个以 Spring Boot 技术栈实现的 BBS 论坛实战项目；**
