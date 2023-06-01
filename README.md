@@ -8,7 +8,7 @@ My BBS 是由 SpringBoot + Mybatis + Thymeleaf 等技术实现的 Java 论坛系
 
 | 分支名称                                                    | Spring Boot Version |
 | ------------------------------------------------------------ | ------------------- |
-| [spring-boot-3.x](https://github.com/ZHENFENG13/My-BBS/tree/spring-boot-3.x) | 3.0.0       |
+| [spring-boot-3.x](https://github.com/ZHENFENG13/My-BBS/tree/spring-boot-3.x) | 3.1.0       |
 | [main](https://github.com/ZHENFENG13/My-BBS)            | 2.4.0               |
 
 - **一个以 Spring Boot 技术栈实现的 BBS 论坛实战项目；**
